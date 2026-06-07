@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phantom Outfits | متجر الفانتوم للملابس</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #0b0c10;
+            --bg-card: #1f2833;
+            --primary: #66fcf1;
+            --primary-hover: #45c4be;
+            --text-light: #c5c6c7;
+            --text-white: #ffffff;
+            --accent: #e53e3e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding-bottom: 60px;
+        }
+
+        /* الهيدر الاحترافي */
+        header {
+            background: linear-gradient(135deg, #1f2833, #0b0c10);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(102, 252, 241, 0.1);
+        }
+
+        header h1 {
+            color: var(--text-white);
+            font-weight: 900;
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+        }
+
+        header h1 span {
+            color: var(--primary);
+        }
+
+        header p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        /* الحاوية الرئيسية */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* قسم المنتجات */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background-color: var(--bg-card);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(102, 252, 241, 0.2);
+            border-color: var(--primary);
+        }
+
+        .product-info {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .product-title {
+            color: var(--text-white);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            color: var(--primary);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .btn-add {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-add:hover {
+            background-color: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        /* الكارت والسلة */
+        .cart-card {
+            background-color: var(--bg-card);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+            height: fit-content;
+            position: sticky;
+            top: 110px;
+        }
+
+        .cart-card h2 {
+            color: var(--text-white);
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .btn-remove {
+            color: var(--accent);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .total-section {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-white);
+            border-top: 2px dashed rgba(255,255,255,0.1);
+            padding-top: 15px;
+        }
+
+        /* حقول الإدخال */
+        .input-group {
+            margin-top: 20px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--bg-dark);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: var(--text-white);
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-checkout {
+            background-color: var(--primary);
+            color: var(--bg-dark);
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(102, 252, 241, 0.3);
+        }
+
+        .btn-checkout:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-checkout:disabled {
+            background-color: #444;
+            color: #777;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 30px 0;
+            color: #777;
+        }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>PHANTOM <span>OUTFITS</span></h1>
+        <p>الأناقة والجمال برؤية عصرية ومميزة ✨</p>
+    </header>
+
+    <div class="container">
+        <main class="products-grid">
+            <div class="product-card">
+                <div class="product-info">
+                    <div class="product-title">تيشرت أوفرسايز أبيض رائع</div>
+                    <div class="product-price">15 دينار</div>
+                    <button class="btn-add" onclick="addToCart('تيشرت أوفرسايز أبيض', 15)">
+                        <i class="fas fa-shopping-basket"></i> إضافة للسلة
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-info">
+                    <div class="product-title">بنطلون جينز كارغو كحلي فخم</div>
+                    <div class="product-price">20 دينار</div>
+                    <button class="btn-add" onclick="addToCart('بنطلون جينز كارغو', 20)">
+                        <i class="fas fa-shopping-basket"></i> إضافة للسلة
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-info">
+                    <div class="product-title">هودي أسود شتوي Phantom ثقيل</div>
+                    <div class="product-price">20 دينار</div>
+                    <button class="btn-add" onclick="addToCart('هودي أسود شتوي', 20)">
+                        <i class="fas fa-shopping-basket"></i> إضافة للسلة
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <aside class="cart-card">
+            <h2><i class="fas fa-shopping-cart" style="color: var(--primary);"></i> سلة المشتريات</h2>
+            <div id="cart-items-container">
+                <div class="empty-cart">السلة فارغة، أضف بعض المنتجات!</div>
+            </div>
+
+            <div class="total-section">
+                <span>الإجمالي:</span>
+                <span id="total-price">0 دينار</span>
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="customer-name" placeholder="الاسم الكامل للزبون" required>
+                <input type="tel" id="customer-phone" placeholder="رقم الهاتف (مثال: 077xxxxxxx)" required>
+            </div>
+
+            <button class="btn-checkout" id="btn-submit-order" onclick="submitOrder()" disabled>
+                <i class="fas fa-paper-plane"></i> إرسال الطلب للمحل الحين ✨
+            </button>
+        </aside>
+    </div>
+
+    <script>
+        // كود الفايربيز الحقيقي والكامل الخاص بمشروعك يا إسلام
+        const firebaseConfig = {
+            apiKey: "AIzaSyBIn7_ryL4n2Q4Xff535T2Snd8a8EN77t0",
+            authDomain: "phantom-outfits.firebaseapp.com",
+            projectId: "phantom-outfits",
+            storageBucket: "phantom-outfits.firebasestorage.app",
+            messagingSenderId: "921614264396",
+            appId: "1:921614264396:web:db984cd526a4b9b5fdace9",
+            measurementId: "G-WFVRXFW09T"
+        };
+
+        // تهيئة الفايربيز وقاعدة البيانات
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let cart = [];
+
+        function addToCart(name, price) {
+            cart.push({ name, price });
+            updateCartUI();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const totalSpan = document.getElementById('total-price');
+            const submitBtn = document.getElementById('btn-submit-order');
+            
+            if (cart.length === 0) {
+                container.innerHTML = '<div class="empty-cart">السلة فارغة، أضف بعض المنتجات!</div>';
+                totalSpan.innerText = '0 دينار';
+                submitBtn.disabled = true;
+                return;
+            }
+
+            container.innerHTML = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                total += item.price;
+                container.innerHTML += `
+                    <div class="cart-item">
+                        <div>
+                            <span style="color:#fff; font-weight:700;">${item.name}</span>
+                            <p style="font-size:0.8rem; color:var(--primary);">${item.price} دينار</p>
+                        </div>
+                        <button class="btn-remove" onclick="removeFromCart(${index})">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `;
+            });
+
+            totalSpan.innerText = total + ' دينار';
+            submitBtn.disabled = false;
+        }
+
+        function submitOrder() {
+            const name = document.getElementById('customer-name').value.trim();
+            const phone = document.getElementById('customer-phone').value.trim();
+            const submitBtn = document.getElementById('btn-submit-order');
+
+            if (!name || !phone) {
+                alert('يا غالي عبّي اسمك ورقم تلفونك أول عشان نعرف نوصلك! 🎯');
+                return;
+            }
+
+            let totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+            
+            // تغيير حالة الزر أثناء الإرسال لمنع التكرار
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إرسال طلبك الفخم...';
+
+            // حفظ الطلب في Firestore مع الوقت الفعلي
+            db.collection("orders").add({
+                customerName: name,
+                customerPhone: phone,
+                items: cart,
+                total: totalPrice,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                alert(`ألف مبروك يا ${name}! طلبك وصل للمحل بنجاح وطار بالجو 🚀✨`);
+                // تفريغ السلة والحقول
+                cart = [];
+                document.getElementById('customer-name').value = '';
+                document.getElementById('customer-phone').value = '';
+                updateCartUI();
+            })
+            .catch((error) => {
+                console.error("Error adding document: ", error);
+                alert("صار مشكلة بالاتصال بالسيرفر، تأكد إنك مفعل الـ Test Mode بالقاعدة 🛑");
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال الطلب للمحل الحين ✨';
+            });
+        }
+    </script>
+</body>
+</html>
