@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم فانتوم | Phantom Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #0f1016;
+            --bg-card: #1a1c24;
+            --primary: #00ffcc;
+            --text-light: #a0aec0;
+            --text-white: #ffffff;
+            --border: rgba(0, 255, 204, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding: 30px 20px;
+        }
+
+        .admin-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--text-white);
+            font-weight: 900;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h1 span {
+            color: var(--primary);
+        }
+
+        .counter {
+            background-color: var(--bg-card);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.1);
+        }
+
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .order-box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .order-box:hover {
+            border-color: var(--primary);
+            box-shadow: 0 5px 20px rgba(0, 255, 204, 0.05);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .client-name {
+            color: var(--text-white);
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .client-phone {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            background: rgba(0, 255, 204, 0.05);
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+        }
+
+        .order-details {
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 0.95rem;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-total {
+            color: var(--text-white);
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .order-total span {
+            color: var(--primary);
+        }
+
+        .order-time {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 5px 0;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 50px 0;
+            color: #555;
+            font-size: 1.2rem;
+        }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body>
+
+    <div class="admin-container">
+        <header>
+            <h1><i class="fas fa-user-shield" style="color: var(--primary);"></i> لوحة تحكم <span>PHANTOM</span></h1>
+            <div class="counter" id="total-count">الطلبات: 0</div>
+        </header>
+
+        <div id="loading-msg" class="loading">
+            <i class="fas fa-circle-notch fa-spin"></i> جاري مراقبة السيرفر والطلبات الحية الحين...
+        </div>
+
+        <div class="orders-list" id="orders-container">
+            </div>
+    </div>
+
+    <script>
+        // كود الفايربيز الحقيقي والكامل الخاص بمشروعك يا إسلام
+        const firebaseConfig = {
+            apiKey: "AIzaSyBIn7_ryL4n2Q4Xff535T2Snd8a8EN77t0",
+            authDomain: "phantom-outfits.firebaseapp.com",
+            projectId: "phantom-outfits",
+            storageBucket: "phantom-outfits.firebasestorage.app",
+            messagingSenderId: "921614264396",
+            appId: "1:921614264396:web:db984cd526a4b9b5fdace9",
+            measurementId: "G-WFVRXFW09T"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let initialLoad = true;
+
+        // دالة لتشغيل صوت تنبيه إلكتروني فخم عند وصول أي طلب جديد
+        function playBeep() {
+            let context = new (window.AudioContext || window.webkitAudioContext)();
+            let osc = context.createOscillator();
+            let gain = context.createGain();
+            osc.type = "sine";
+            osc.frequency.value = 880; // تردد نغمة حادة واحترافية
+            gain.gain.setValueAtTime(0.2, context.currentTime);
+            osc.connect(gain);
+            gain.connect(context.destination);
+            osc.start();
+            osc.stop(context.currentTime + 0.15);
+        }
+
+        // الاستماع الفوري والحي للتغيرات في السيرفر (Realtime) مرتبة من الأحدث للأقدم
+        db.collection("orders").orderBy("timestamp", "desc")
+        .onSnapshot((snapshot) => {
+            document.getElementById('loading-msg').style.display = 'none';
+            const container = document.getElementById('orders-container');
+            const countDiv = document.getElementById('total-count');
+            
+            countDiv.innerText = `إجمالي الطلبات: ${snapshot.size}`;
+
+            if (snapshot.empty) {
+                container.innerHTML = '<div class="no-orders"><i class="far fa-folder-open" style="font-size:3rem; margin-bottom:15px; display:block;"></i> لا يوجد أي طلبات في قاعدة البيانات حالياً.</div>';
+                initialLoad = false;
+                return;
+            }
+
+            // تشغيل الصوت إذا دخل طلب جديد والموقع مفتوح
+            if (!initialLoad && snapshot.docChanges().some(change => change.type === "added")) {
+                playBeep();
+            }
+            initialLoad = false;
+
+            container.innerHTML = '';
+
+            snapshot.forEach((doc) => {
+                const order = doc.data();
+                
+                // تحويل الوقت لشكل مفهوم ومقروء بالأردني
+                let orderTime = "قبل قليل";
+                if (order.timestamp) {
+                    const date = order.timestamp.toDate();
+                    orderTime = date.toLocaleTimeString('ar-JO', { hour: '2-digit', minute: '2-digit' }) + ' | ' + date.toLocaleDateString('ar-JO');
+                }
+
+                let itemsHTML = '';
+                order.items.forEach(item => {
+                    itemsHTML += `
+                        <div class="item-row">
+                            <span style="color: #fff;">• ${item.name}</span>
+                            <span style="color: var(--primary);">${item.price} د.أ</span>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML += `
+                    <div class="order-box">
+                        <div class="order-header">
+                            <div class="client-name">
+                                <i class="fas fa-user-circle" style="color:var(--primary);"></i>
+                                ${order.customerName}
+                            </div>
+                            <a href="tel:${order.customerPhone}" class="client-phone">
+                                <i class="fas fa-phone-alt"></i> ${order.customerPhone}
+                            </a>
+                        </div>
+                        <div class="order-details">
+                            ${itemsHTML}
+                        </div>
+                        <div class="order-footer">
+                            <div class="order-total">حساب الفاتورة: <span>${order.total} دينار</span></div>
+                            <div class="order-time"><i class="far fa-clock"></i> ${orderTime}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        });
+    </script>
+</body>
+</html>
